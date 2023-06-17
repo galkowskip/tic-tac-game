@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "@testing-library/react";
 
-import GameBoard from "./GameBoard.tsx";
+import GameBoard from "./GameBoard.js";
 
 let gameState = [[], [], []];
 let setGameState = (value) => {
