@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, browserLocalPersistence, setPersistence } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
-import { redirect } from "react-router-dom";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -20,13 +19,7 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
 const auth = getAuth(app);
+setPersistence(auth, browserLocalPersistence);
 
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    redirect('/')
-  } else {
-    redirect('/login')
-  }
-});
 
-export { app, analytics, auth }
+export { app, analytics, auth  }
