@@ -3,56 +3,60 @@ import { render } from "@testing-library/react";
 
 import GameWidget from "./GameWidget.tsx";
 
-test("renders game widget", () => {
-  const { container } = render(<GameWidget />);
+describe("GameWidget", () => {
+  test("renders game widget", () => {
+    const { container } = render(<GameWidget />);
 
-  const gameWidgetContainer = container.getElementsByClassName("game-widget");
+    const gameWidgetContainer = container.getElementsByClassName("game-widget");
 
-  expect(gameWidgetContainer).toHaveLength(1);
-});
+    expect(gameWidgetContainer).toHaveLength(1);
+  });
 
-test("renders start player", () => {
-  const { container } = render(<GameWidget />);
+  test("renders start player", () => {
+    const { container } = render(<GameWidget />);
 
-  const currentPlayer = container.getElementsByClassName("game-widget")[0];
-  const currentPlayerText =
-    currentPlayer.getElementsByClassName("game-state")[0];
+    const currentPlayer = container.getElementsByClassName("game-widget")[0];
+    const currentPlayerText =
+      currentPlayer.getElementsByClassName("game-state")[0];
 
-  expect(currentPlayerText).toHaveTextContent("Current player: X");
-});
+    expect(currentPlayerText).toHaveTextContent("Current player: X");
+  });
 
-test("changes player on tile click", async () => {
-  const { container } = render(<GameWidget />);
+  test("changes player on tile click", async () => {
+    const { container } = render(<GameWidget />);
 
-  const gameBoardContainer = container.getElementsByClassName("game-widget")[0];
-  const gameTiles = gameBoardContainer.getElementsByClassName("tile");
+    const gameBoardContainer =
+      container.getElementsByClassName("game-widget")[0];
+    const gameTiles = gameBoardContainer.getElementsByClassName("tile");
 
-  const tile = gameTiles[0] as HTMLElement;
-  await tile.click();
+    const tile = gameTiles[0] as HTMLElement;
+    await tile.click();
 
-  const currentPlayer = container.getElementsByClassName("game-widget")[0];
-  const currentPlayerText =
-    currentPlayer.getElementsByClassName("game-state")[0];
+    const currentPlayer = container.getElementsByClassName("game-widget")[0];
+    const currentPlayerText =
+      currentPlayer.getElementsByClassName("game-state")[0];
 
-  expect(currentPlayerText).toHaveTextContent("Current player: O");
-});
+    expect(currentPlayerText).toHaveTextContent("Current player: O");
+  });
 
-test("does not change player on tile click if tile is already clicked", async () => {
-  const { container } = render(<GameWidget />);
+  test("does not change player on tile click if tile is already clicked", async () => {
+    const { container } = render(<GameWidget />);
 
-  const gameBoardContainer = container.getElementsByClassName("game-widget")[0];
-  const gameTiles = gameBoardContainer.getElementsByClassName("tile");
+    const gameBoardContainer =
+      container.getElementsByClassName("game-widget")[0];
+    const gameTiles = gameBoardContainer.getElementsByClassName("tile");
 
-  const tile = gameTiles[0] as HTMLElement;
-  await tile.click();
+    const tile = gameTiles[0] as HTMLElement;
+    await tile.click();
 
-  const currentPlayer = container.getElementsByClassName("game-widget")[0];
-  const currentPlayerText =
-    currentPlayer.getElementsByClassName("game-state")[0];
+    const currentPlayer = container.getElementsByClassName("game-widget")[0];
+    const currentPlayerText =
+      currentPlayer.getElementsByClassName("game-state")[0];
 
-  expect(currentPlayerText).toHaveTextContent("Current player: O");
+    expect(currentPlayerText).toHaveTextContent("Current player: O");
 
-  await tile.click();
+    await tile.click();
 
-  expect(currentPlayerText).toHaveTextContent("Current player: O");
+    expect(currentPlayerText).toHaveTextContent("Current player: O");
+  });
 });

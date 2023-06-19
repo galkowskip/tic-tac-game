@@ -41,206 +41,207 @@ function renderGameBoard() {
     />
   );
 }
+describe("GameBoard", () => {
+  beforeEach(() => {
+    setGameState([
+      [false, false, false],
+      [false, false, false],
+      [false, false, false],
+    ]);
 
-beforeEach(() => {
-  setGameState([
-    [false, false, false],
-    [false, false, false],
-    [false, false, false],
-  ]);
+    setIsWinner(false);
+    setIsDraw(false);
+    currentPlayer = "X";
+  });
 
-  setIsWinner(false);
-  setIsDraw(false);
-  currentPlayer = "X";
-});
+  test("renders game board", () => {
+    const { container } = render(renderGameBoard());
 
-test("renders game board", () => {
-  const { container } = render(renderGameBoard());
+    const gameTiles = container.getElementsByClassName("tile");
 
-  const gameTiles = container.getElementsByClassName("tile");
+    expect(gameTiles).toHaveLength(9);
 
-  expect(gameTiles).toHaveLength(9);
+    const tiles = Array.from(gameTiles);
+    tiles.forEach((tile) => {
+      expect(tile).toHaveTextContent("");
+    });
+  });
 
-  const tiles = Array.from(gameTiles);
-  tiles.forEach((tile) => {
+  test("renders game board with X and O", async () => {
+    setGameState([
+      ["X", false, false],
+      [false, false, false],
+      [false, false, "O"],
+    ]);
+
+    const { container } = render(renderGameBoard());
+
+    const gameTiles = container.getElementsByClassName("tile");
+
+    expect(gameTiles).toHaveLength(9);
+
+    const tiles = Array.from(gameTiles);
+    expect(tiles[0]).toHaveTextContent("X");
+    expect(tiles[8]).toHaveTextContent("O");
+  });
+
+  test("handles tile click", async () => {
+    const { container, rerender } = render(renderGameBoard());
+
+    const gameTiles = container.getElementsByClassName("tile");
+
+    const tile = gameTiles[0] as HTMLElement;
+
+    await tile.click();
+
+    rerender(renderGameBoard());
+
+    expect(tile).toHaveTextContent("X");
+  });
+
+  test("does not handle tile click if tile is already clicked", async () => {
+    const { container, rerender } = render(renderGameBoard());
+
+    const gameTiles = container.getElementsByClassName("tile");
+
+    const tile = gameTiles[0] as HTMLElement;
+
+    await tile.click();
+
+    rerender(renderGameBoard());
+
+    expect(tile).toHaveTextContent("X");
+
+    await tile.click();
+
+    rerender(renderGameBoard());
+
+    expect(tile).toHaveTextContent("X");
+  });
+
+  test("does not handle tile click if there is a winner", async () => {
+    setIsWinner(true);
+
+    const { container, rerender } = render(renderGameBoard());
+
+    const gameTiles = container.getElementsByClassName("tile");
+    const tile = gameTiles[0] as HTMLElement;
+
+    await tile.click();
+
+    rerender(renderGameBoard());
+
     expect(tile).toHaveTextContent("");
   });
-});
 
-test("renders game board with X and O", async () => {
-  setGameState([
-    ["X", false, false],
-    [false, false, false],
-    [false, false, "O"],
-  ]);
+  test("does not handle tile click if there is a draw", async () => {
+    setIsDraw(true);
 
-  const { container } = render(renderGameBoard());
+    const { container, rerender } = render(renderGameBoard());
 
-  const gameTiles = container.getElementsByClassName("tile");
+    const gameTiles = container.getElementsByClassName("tile");
+    const tile = gameTiles[0] as HTMLElement;
 
-  expect(gameTiles).toHaveLength(9);
+    await tile.click();
 
-  const tiles = Array.from(gameTiles);
-  expect(tiles[0]).toHaveTextContent("X");
-  expect(tiles[8]).toHaveTextContent("O");
-});
+    rerender(renderGameBoard());
 
-test("handles tile click", async () => {
-  const { container, rerender } = render(renderGameBoard());
+    expect(tile).toHaveTextContent("");
+  });
 
-  const gameTiles = container.getElementsByClassName("tile");
+  test("checks for draw", async () => {
+    setGameState([
+      [false, "O", "X"],
+      ["O", "X", "O"],
+      ["O", "X", "O"],
+    ]);
 
-  const tile = gameTiles[0] as HTMLElement;
+    const { container, rerender } = render(renderGameBoard());
 
-  await tile.click();
+    const gameTiles = container.getElementsByClassName("tile");
+    const tile = gameTiles[0] as HTMLElement;
 
-  rerender(renderGameBoard());
+    await tile.click();
 
-  expect(tile).toHaveTextContent("X");
-});
+    rerender(renderGameBoard());
 
-test("does not handle tile click if tile is already clicked", async () => {
-  const { container, rerender } = render(renderGameBoard());
+    expect(tile).toHaveTextContent("X");
 
-  const gameTiles = container.getElementsByClassName("tile");
+    expect(isDraw).toBe(true);
+    expect(isWinner).toBe(false);
 
-  const tile = gameTiles[0] as HTMLElement;
+    const draw = container.getElementsByClassName("draw");
+    expect(draw).toHaveLength(1);
+  });
 
-  await tile.click();
+  test("checks for horizontal winner", async () => {
+    setGameState([
+      [false, "X", "X"],
+      [false, false, false],
+      [false, false, false],
+    ]);
 
-  rerender(renderGameBoard());
+    const { container, rerender } = render(renderGameBoard());
 
-  expect(tile).toHaveTextContent("X");
+    const gameTiles = container.getElementsByClassName("tile");
+    const tile = gameTiles[0] as HTMLElement;
 
-  await tile.click();
+    await tile.click();
 
-  rerender(renderGameBoard());
+    rerender(renderGameBoard());
 
-  expect(tile).toHaveTextContent("X");
-});
+    expect(tile).toHaveTextContent("X");
 
-test("does not handle tile click if there is a winner", async () => {
-  setIsWinner(true);
+    expect(isDraw).toBe(false);
+    expect(isWinner).toBe(true);
 
-  const { container, rerender } = render(renderGameBoard());
+    const winner = container.getElementsByClassName("winner");
+    expect(winner).toHaveLength(1);
+  });
 
-  const gameTiles = container.getElementsByClassName("tile");
-  const tile = gameTiles[0] as HTMLElement;
+  test("checks for vertical winner", async () => {
+    setGameState([
+      [false, false, "X"],
+      [false, false, "X"],
+      [false, false, false],
+    ]);
 
-  await tile.click();
+    const { container, rerender } = render(renderGameBoard());
 
-  rerender(renderGameBoard());
+    const gameTiles = container.getElementsByClassName("tile");
+    const tile = gameTiles[8] as HTMLElement;
 
-  expect(tile).toHaveTextContent("");
-});
+    await tile.click();
 
-test("does not handle tile click if there is a draw", async () => {
-  setIsDraw(true);
+    rerender(renderGameBoard());
 
-  const { container, rerender } = render(renderGameBoard());
+    expect(tile).toHaveTextContent("X");
+    expect(isDraw).toBe(false);
+    expect(isWinner).toBe(true);
+    const winner = container.getElementsByClassName("winner");
+    expect(winner).toHaveLength(1);
+  });
 
-  const gameTiles = container.getElementsByClassName("tile");
-  const tile = gameTiles[0] as HTMLElement;
+  test("checks for diagonal winner", async () => {
+    setGameState([
+      ["X", false, false],
+      [false, "X", false],
+      [false, false, false],
+    ]);
 
-  await tile.click();
+    const { container, rerender } = render(renderGameBoard());
 
-  rerender(renderGameBoard());
+    const gameTiles = container.getElementsByClassName("tile");
+    const tile = gameTiles[8] as HTMLElement;
 
-  expect(tile).toHaveTextContent("");
-});
+    await tile.click();
 
-test("checks for draw", async () => {
-  setGameState([
-    [false, "O", "X"],
-    ["O", "X", "O"],
-    ["O", "X", "O"],
-  ]);
+    rerender(renderGameBoard());
 
-  const { container, rerender } = render(renderGameBoard());
-
-  const gameTiles = container.getElementsByClassName("tile");
-  const tile = gameTiles[0] as HTMLElement;
-
-  await tile.click();
-
-  rerender(renderGameBoard());
-
-  expect(tile).toHaveTextContent("X");
-
-  expect(isDraw).toBe(true);
-  expect(isWinner).toBe(false);
-
-  const draw = container.getElementsByClassName("draw");
-  expect(draw).toHaveLength(1);
-});
-
-test("checks for horizontal winner", async () => {
-  setGameState([
-    [false, "X", "X"],
-    [false, false, false],
-    [false, false, false],
-  ]);
-
-  const { container, rerender } = render(renderGameBoard());
-
-  const gameTiles = container.getElementsByClassName("tile");
-  const tile = gameTiles[0] as HTMLElement;
-
-  await tile.click();
-
-  rerender(renderGameBoard());
-
-  expect(tile).toHaveTextContent("X");
-
-  expect(isDraw).toBe(false);
-  expect(isWinner).toBe(true);
-
-  const winner = container.getElementsByClassName("winner");
-  expect(winner).toHaveLength(1);
-});
-
-test("checks for vertical winner", async () => {
-  setGameState([
-    [false, false, "X"],
-    [false, false, "X"],
-    [false, false, false],
-  ]);
-
-  const { container, rerender } = render(renderGameBoard());
-
-  const gameTiles = container.getElementsByClassName("tile");
-  const tile = gameTiles[8] as HTMLElement;
-
-  await tile.click();
-
-  rerender(renderGameBoard());
-
-  expect(tile).toHaveTextContent("X");
-  expect(isDraw).toBe(false);
-  expect(isWinner).toBe(true);
-  const winner = container.getElementsByClassName("winner");
-  expect(winner).toHaveLength(1);
-});
-
-test("checks for diagonal winner", async () => {
-  setGameState([
-    ["X", false, false],
-    [false, "X", false],
-    [false, false, false],
-  ]);
-
-  const { container, rerender } = render(renderGameBoard());
-
-  const gameTiles = container.getElementsByClassName("tile");
-  const tile = gameTiles[8] as HTMLElement;
-
-  await tile.click();
-
-  rerender(renderGameBoard());
-
-  expect(tile).toHaveTextContent("X");
-  expect(isDraw).toBe(false);
-  expect(isWinner).toBe(true);
-  const winner = container.getElementsByClassName("winner");
-  expect(winner).toHaveLength(1);
+    expect(tile).toHaveTextContent("X");
+    expect(isDraw).toBe(false);
+    expect(isWinner).toBe(true);
+    const winner = container.getElementsByClassName("winner");
+    expect(winner).toHaveLength(1);
+  });
 });
