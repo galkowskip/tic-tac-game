@@ -45,10 +45,8 @@ function gameBoard({
 
       if (checkDraw()) {
         setIsDraw(true);
-        console.log("Draw");
       } else if (checkWinConditions()) {
         setIsWinner(true);
-        console.log(`Winner is ${currentPlayer}`);
       } else {
         setIsWinner(false);
         toggleCurrentPlayer();

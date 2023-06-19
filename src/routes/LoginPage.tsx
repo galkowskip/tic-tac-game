@@ -1,10 +1,11 @@
 import React from "react";
 
+import LoginContainer from "../components/Login/LoginContainer.tsx";
+
 function LoginPage() {
   return (
     <div>
-      <h3>Login</h3>
-      here should be login
+      <LoginContainer />
     </div>
   );
 }
