@@ -1,7 +1,7 @@
 import React from "react";
 import { signOut } from "firebase/auth";
 
-import { AuthContext } from "../../contexts";
+import { AuthContext } from "../../contexts.ts";
 import { auth } from "../../firebaseConfig";
 
 function ProfileFloatingActionButton() {
@@ -9,9 +9,7 @@ function ProfileFloatingActionButton() {
 
   async function logout() {
     try {
-      const result = await signOut(auth);
-
-      console.log(result);
+      signOut(auth);
     } catch (error) {
       console.log(error);
     }

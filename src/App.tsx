@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig";
-import { AuthContext } from "./contexts";
+import { AuthContext } from "./contexts.ts";
 
 import router from "./router";
 import { RouterProvider } from "react-router-dom";
@@ -13,16 +13,16 @@ function App() {
   const [user, setUser] = React.useState<null | User>(null);
 
   onAuthStateChanged(auth, (userObject) => {
-    if (userObject) {
+    if (userObject && user === null) {
       console.log("User is signed in");
       setUser(userObject);
-    } else {
+    } else if (userObject === null && user !== null) {
       console.log("No user is signed in");
       setUser(null);
+    } else {
+      return;
     }
   });
-
-  useEffect(() => {}, [user]);
 
   return (
     <AuthContext.Provider value={user}>

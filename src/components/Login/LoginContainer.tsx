@@ -9,7 +9,7 @@ import {
   GoogleAuthProvider,
 } from "firebase/auth";
 
-import { AuthContext } from "../../contexts";
+import { AuthContext } from "../../contexts.ts";
 
 function LoginContainer() {
   const [loginError, setLoginError] = React.useState(null);
