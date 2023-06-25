@@ -17,7 +17,6 @@ function LoginContainer() {
 
   const submitUserCredentials = async (event) => {
     event.preventDefault();
-    console.log(authContext);
 
     const email = event.target[0].value;
     const password = event.target[1].value;

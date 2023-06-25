@@ -14,6 +14,7 @@ function GameWidget() {
   const [isWinner, setIsWinner] = React.useState<Boolean>(false);
   const [isDraw, setIsDraw] = React.useState<Boolean>(false);
 
+
   function toggleCurrentPlayer(): void {
     if (currentPlayer === "X") {
       setCurrentPlayer("O");
