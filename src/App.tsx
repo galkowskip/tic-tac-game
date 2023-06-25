@@ -15,25 +15,48 @@ function App() {
   const [user, setUser] = React.useState<null | User>(null);
   const [player, setPlayer] = React.useState<null | PlayerState>(null);
 
-
   const functions = getFunctions();
 
   const getPlayerData = httpsCallable(functions, "getCurrentPlayerData");
 
+  function getPlayerDataFromCache() {
+    const playerData = localStorage.getItem("playerData");
+
+    if (playerData) {
+      setPlayer(JSON.parse(playerData));
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function setPlayerDataToCache(playerData: PlayerState) {
+    localStorage.setItem("playerData", JSON.stringify(playerData));
+  }
+
   async function setCurrentPlayerData(uid) {
+    try {
+      const result = await getPlayerData({ uid: uid });
 
-    const playerData = await getPlayerData({ uid: uid });
-    setPlayer(playerData.data);
+      const playerData = result.data as PlayerState;
 
+      setPlayer(playerData);
 
-    console.log(player);
+      setPlayerDataToCache(playerData as PlayerState);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   onAuthStateChanged(auth, (userObject) => {
     if (userObject && user === null) {
       setUser(userObject);
 
-      setCurrentPlayerData(userObject.uid);
+      const playerCache = getPlayerDataFromCache();
+
+      if (!playerCache) {
+        setCurrentPlayerData(userObject.uid);
+      }
     } else if (userObject === null && user !== null) {
       setUser(null);
     } else {
